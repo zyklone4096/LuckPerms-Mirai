@@ -80,27 +80,27 @@ internal object SwitchDebugCommand : SingleCommand(
                     newLine()
                     newLine("LPM DebugLogger: " + (if (DebugKit.isDebugEnabled) "ON" else "OFF"))
                     newLine("Trusted Users: " + DebugKit.trustedUsers)
-                    val keeper = LPMiraiPlugin.userManager.houseKeeper
-                    val ru = UserHousekeeper.Access.recentlyUsed(keeper)
-                    val rua = UserHousekeeper.Access.recentlyUsedApi(keeper)
-                    newLine("UserHousekeeper.recentlyUsed:")
-                    ru.snapshot().forEach { uid ->
-                        newLine {
-                            append(uid)
-                            if (uid.mostSignificantBits == MAGIC_UUID_HIGH_BITS) {
-                                append(" -> ").append(uid.leastSignificantBits)
-                            }
-                        }
-                    }
-                    newLine("UserHousekeeper.recentlyUsedApi:")
-                    rua.snapshot().forEach { uid ->
-                        newLine {
-                            append(uid)
-                            if (uid.mostSignificantBits == MAGIC_UUID_HIGH_BITS) {
-                                append(" -> ").append(uid.leastSignificantBits)
-                            }
-                        }
-                    }
+//                    val keeper = LPMiraiPlugin.userManager.houseKeeper
+//                    val ru = UserHousekeeper.Access.recentlyUsed(keeper)
+//                    val rua = UserHousekeeper.Access.recentlyUsedApi(keeper)
+//                    newLine("UserHousekeeper.recentlyUsed:")
+//                    ru.snapshot().forEach { uid ->
+//                        newLine {
+//                            append(uid)
+//                            if (uid.mostSignificantBits == MAGIC_UUID_HIGH_BITS) {
+//                                append(" -> ").append(uid.leastSignificantBits)
+//                            }
+//                        }
+//                    }
+//                    newLine("UserHousekeeper.recentlyUsedApi:")
+//                    rua.snapshot().forEach { uid ->
+//                        newLine {
+//                            append(uid)
+//                            if (uid.mostSignificantBits == MAGIC_UUID_HIGH_BITS) {
+//                                append(" -> ").append(uid.leastSignificantBits)
+//                            }
+//                        }
+//                    }
                 })
             }
             "trust" -> {

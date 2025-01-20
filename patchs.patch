@@ -1,5 +1,5 @@
 diff --git a/api/src/main/java/net/luckperms/api/platform/Platform.java b/api/src/main/java/net/luckperms/api/platform/Platform.java
-index bc31a34a8..e1e0dc00b 100644
+index 32b727316..e9afafedd 100644
 --- a/api/src/main/java/net/luckperms/api/platform/Platform.java
 +++ b/api/src/main/java/net/luckperms/api/platform/Platform.java
 @@ -71,6 +71,7 @@ public interface Platform {
@@ -10,11 +10,35 @@ index bc31a34a8..e1e0dc00b 100644
          BUNGEECORD("BungeeCord"),
          SPONGE("Sponge"),
          NUKKIT("Nukkit"),
+diff --git a/build.gradle b/build.gradle
+index e84e73039..308c69ebf 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -37,18 +37,7 @@ subprojects {
+     }
+ 
+     def determinePatchVersion = {
+-        // get the name of the last tag
+-        def tagInfo = new ByteArrayOutputStream()
+-        exec {
+-            commandLine 'git', 'describe', '--tags'
+-            standardOutput = tagInfo
+-        }
+-        tagInfo = tagInfo.toString()
+-
+-        if (!tagInfo.contains('-')) {
+-            return 0
+-        }
+-        return tagInfo.split("-")[1]
++        return "nobodyKnows"
+     }
+ 
+     project.ext.majorVersion = '5'
 diff --git a/common/src/main/java/me/lucko/luckperms/common/api/implementation/ApiPlatform.java b/common/src/main/java/me/lucko/luckperms/common/api/implementation/ApiPlatform.java
-index d19884c76..1c5d918c2 100644
+index 3dcfcfe1e..8b3e0dc6d 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/api/implementation/ApiPlatform.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/api/implementation/ApiPlatform.java
-@@ -52,7 +52,8 @@ public class ApiPlatform implements Platform, PluginMetadata {
+@@ -50,7 +50,8 @@ public class ApiPlatform implements Platform, PluginMetadata {
  
      @Override
      public @NonNull String getApiVersion() {
@@ -25,7 +49,7 @@ index d19884c76..1c5d918c2 100644
      }
  
 diff --git a/common/src/main/java/me/lucko/luckperms/common/command/CommandManager.java b/common/src/main/java/me/lucko/luckperms/common/command/CommandManager.java
-index c5be1966a..ecd1fddf1 100644
+index 6fd381183..1d77dd5f5 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/command/CommandManager.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/command/CommandManager.java
 @@ -89,6 +89,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
@@ -75,7 +99,7 @@ index c5be1966a..ecd1fddf1 100644
      public TabCompletions getTabCompletions() {
          return this.tabCompletions;
      }
-@@ -220,10 +235,25 @@ public class CommandManager {
+@@ -225,10 +240,25 @@ public class CommandManager {
      }
  
      private void execute(Sender sender, String label, List<String> arguments) {
@@ -101,7 +125,7 @@ index c5be1966a..ecd1fddf1 100644
              sender.sendMessage(Message.prefixed(Component.text()
                      .color(NamedTextColor.DARK_GREEN)
                      .append(Component.text("Running "))
-@@ -233,16 +263,21 @@ public class CommandManager {
+@@ -238,16 +268,21 @@ public class CommandManager {
                      .append(Message.FULL_STOP)
              ));
  
@@ -126,7 +150,7 @@ index c5be1966a..ecd1fddf1 100644
              }
              return;
          }
-@@ -300,14 +335,6 @@ public class CommandManager {
+@@ -305,14 +340,6 @@ public class CommandManager {
      }
  
      private void sendCommandUsage(Sender sender, String label) {
@@ -154,7 +178,7 @@ index ed1ed15e3..aac889424 100644
      SYNC("sync", Type.NONE),
      INFO("info", Type.NONE),
 diff --git a/common/src/main/java/me/lucko/luckperms/common/command/spec/CommandSpec.java b/common/src/main/java/me/lucko/luckperms/common/command/spec/CommandSpec.java
-index f749a3117..44740004f 100644
+index cc5050321..0431c49f4 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/command/spec/CommandSpec.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/command/spec/CommandSpec.java
 @@ -38,6 +38,7 @@ import java.util.Locale;
@@ -166,23 +190,23 @@ index f749a3117..44740004f 100644
      USER("/%s user <user>"),
      GROUP("/%s group <group>"),
 diff --git a/common/src/main/java/me/lucko/luckperms/common/commands/misc/EditorCommand.java b/common/src/main/java/me/lucko/luckperms/common/commands/misc/EditorCommand.java
-index 46ac1698d..166e2fbf9 100644
+index 5f55c03ce..dd236005c 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/commands/misc/EditorCommand.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/commands/misc/EditorCommand.java
-@@ -108,6 +108,8 @@ public class EditorCommand extends SingleCommand {
+@@ -107,6 +107,8 @@ public class EditorCommand extends SingleCommand {
  
          Message.EDITOR_START.send(sender);
  
 +        sender.flush();
 +
-         WebEditorSession.createAndOpen(holders, tracks, sender, label, plugin);
+         WebEditorSession.create(holders, tracks, sender, label, plugin).open();
      }
  
 diff --git a/common/src/main/java/me/lucko/luckperms/common/config/ConfigKeys.java b/common/src/main/java/me/lucko/luckperms/common/config/ConfigKeys.java
-index 17b2d7b48..8de0a9fec 100644
+index 3a394545b..b0535005f 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/config/ConfigKeys.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/config/ConfigKeys.java
-@@ -735,7 +735,7 @@ public final class ConfigKeys {
+@@ -754,7 +754,7 @@ public final class ConfigKeys {
      /**
       * A list of the keys defined in this class.
       */
@@ -191,19 +215,19 @@ index 17b2d7b48..8de0a9fec 100644
  
      public static List<? extends ConfigKey<?>> getKeys() {
          return KEYS;
-diff --git a/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyManager.java b/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyManager.java
-index 710658ef8..17ba4728c 100644
---- a/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyManager.java
-+++ b/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyManager.java
-@@ -32,6 +32,7 @@ import me.lucko.luckperms.common.dependencies.relocation.Relocation;
+diff --git a/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyManagerImpl.java b/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyManagerImpl.java
+index d40acfa94..a19e70f0d 100644
+--- a/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyManagerImpl.java
++++ b/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyManagerImpl.java
+@@ -31,6 +31,7 @@ import me.lucko.luckperms.common.dependencies.relocation.Relocation;
  import me.lucko.luckperms.common.dependencies.relocation.RelocationHandler;
  import me.lucko.luckperms.common.plugin.LuckPermsPlugin;
  import me.lucko.luckperms.common.plugin.classpath.ClassPathAppender;
 +import me.lucko.luckperms.common.plugin.logging.PluginLogger;
  import me.lucko.luckperms.common.storage.StorageType;
  import me.lucko.luckperms.common.util.MoreFiles;
- 
-@@ -72,6 +73,7 @@ public class DependencyManager {
+ import net.luckperms.api.platform.Platform;
+@@ -69,6 +70,7 @@ public class DependencyManagerImpl implements DependencyManager {
      private final EnumMap<Dependency, Path> loaded = new EnumMap<>(Dependency.class);
      /** A map of isolated classloaders which have been created. */
      private final Map<ImmutableSet<Dependency>, IsolatedClassLoader> loaders = new HashMap<>();
@@ -211,15 +235,15 @@ index 710658ef8..17ba4728c 100644
      /** Cached relocation handler instance. */
      private @MonotonicNonNull RelocationHandler relocationHandler = null;
  
-@@ -80,6 +82,7 @@ public class DependencyManager {
+@@ -77,6 +79,7 @@ public class DependencyManagerImpl implements DependencyManager {
          this.cacheDirectory = setupCacheDirectory(plugin);
          this.classPathAppender = plugin.getBootstrap().getClassPathAppender();
          this.loadingExecutor = plugin.getBootstrap().getScheduler().async();
 +        this.logger = plugin.getLogger();
      }
  
-     public DependencyManager(Path cacheDirectory, Executor executor) { // standalone
-@@ -87,6 +90,7 @@ public class DependencyManager {
+     public DependencyManagerImpl(Path cacheDirectory, Executor executor) { // standalone pre-loader
+@@ -84,6 +87,7 @@ public class DependencyManagerImpl implements DependencyManager {
          this.cacheDirectory = cacheDirectory;
          this.classPathAppender = null;
          this.loadingExecutor = executor;
@@ -227,7 +251,7 @@ index 710658ef8..17ba4728c 100644
      }
  
      private synchronized RelocationHandler getRelocationHandler() {
-@@ -186,6 +190,9 @@ public class DependencyManager {
+@@ -186,6 +190,9 @@ public class DependencyManagerImpl implements DependencyManager {
          // attempt to download the dependency from each repo in order.
          for (DependencyRepository repo : DependencyRepository.values()) {
              try {
@@ -238,7 +262,7 @@ index 710658ef8..17ba4728c 100644
                  return file;
              } catch (DependencyDownloadException e) {
 diff --git a/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyRepository.java b/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyRepository.java
-index 7dcdd4ea5..8b3d32972 100644
+index 5d58cf71b..c4cc6fd62 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyRepository.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/dependencies/DependencyRepository.java
 @@ -41,6 +41,16 @@ import java.util.concurrent.TimeUnit;
@@ -259,10 +283,10 @@ index 7dcdd4ea5..8b3d32972 100644
       * Maven Central mirror repository.
       *
 diff --git a/common/src/main/java/me/lucko/luckperms/common/locale/Message.java b/common/src/main/java/me/lucko/luckperms/common/locale/Message.java
-index 0be4e97e1..bf66ed15d 100644
+index bd527b793..c75a82c7b 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/locale/Message.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/locale/Message.java
-@@ -1576,8 +1576,7 @@ public interface Message {
+@@ -1583,8 +1583,7 @@ public interface Message {
                      .append(text(':'))),
              prefixed(text()
                      .color(WHITE)
@@ -273,10 +297,10 @@ index 0be4e97e1..bf66ed15d 100644
                      .color(AQUA)
                      .append(text("-  ", WHITE))
 diff --git a/common/src/main/java/me/lucko/luckperms/common/model/manager/user/UserHousekeeper.java b/common/src/main/java/me/lucko/luckperms/common/model/manager/user/UserHousekeeper.java
-index f1ae13665..bbbd40edc 100644
+index c458d2440..4d55f7857 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/model/manager/user/UserHousekeeper.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/model/manager/user/UserHousekeeper.java
-@@ -75,7 +75,7 @@ public class UserHousekeeper implements Runnable {
+@@ -76,7 +76,7 @@ public class UserHousekeeper implements Runnable {
  
      public void cleanup(UUID uuid) {
          // unload users which aren't online and who haven't been online (or tried to login) recently
@@ -285,7 +309,7 @@ index f1ae13665..bbbd40edc 100644
              return;
          }
  
-@@ -108,4 +108,14 @@ public class UserHousekeeper implements Runnable {
+@@ -109,4 +109,14 @@ public class UserHousekeeper implements Runnable {
              this.unit = unit;
          }
      }
@@ -301,10 +325,10 @@ index f1ae13665..bbbd40edc 100644
 +    }
  }
 diff --git a/common/src/main/java/me/lucko/luckperms/common/plugin/bootstrap/LuckPermsBootstrap.java b/common/src/main/java/me/lucko/luckperms/common/plugin/bootstrap/LuckPermsBootstrap.java
-index df8fbcb53..d089dd490 100644
+index def95b260..358beb853 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/plugin/bootstrap/LuckPermsBootstrap.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/plugin/bootstrap/LuckPermsBootstrap.java
-@@ -232,4 +232,14 @@ public interface LuckPermsBootstrap {
+@@ -230,4 +230,14 @@ public interface LuckPermsBootstrap {
          return null;
      }
  
@@ -320,10 +344,10 @@ index df8fbcb53..d089dd490 100644
 +    // LuckPerms Mirai - End
  }
 diff --git a/common/src/main/java/me/lucko/luckperms/common/sender/Sender.java b/common/src/main/java/me/lucko/luckperms/common/sender/Sender.java
-index a4287a7d0..df176f333 100644
+index 03073647b..bb4d6cce6 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/sender/Sender.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/sender/Sender.java
-@@ -160,4 +160,12 @@ public interface Sender {
+@@ -159,4 +159,12 @@ public interface Sender {
          return true;
      }
  
@@ -337,42 +361,24 @@ index a4287a7d0..df176f333 100644
 +    default boolean isHoverEventSupported() { return false; }
  }
 diff --git a/common/src/main/java/me/lucko/luckperms/common/util/ExpiringSet.java b/common/src/main/java/me/lucko/luckperms/common/util/ExpiringSet.java
-index 8ed2535d9..aef840178 100644
+index d4e12d5c3..1ec846cd3 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/util/ExpiringSet.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/util/ExpiringSet.java
 @@ -27,6 +27,9 @@ package me.lucko.luckperms.common.util;
  
- import com.github.benmanes.caffeine.cache.Cache;
- 
+ import java.util.Collections;
+ import java.util.Set;
 +import java.util.ArrayList;
 +import java.util.Collection;
 +import java.util.Map;
  import java.util.concurrent.TimeUnit;
  
- /**
-@@ -57,4 +60,17 @@ public class ExpiringSet<E> {
-     public void remove(E item) {
-         this.cache.invalidate(item);
-     }
-+
-+    public Collection<E> snapshot() {
-+        ArrayList<E> rsp = new ArrayList<>();
-+        long currentTime = System.currentTimeMillis();
-+        for (Map.Entry<E, Long> e : cache.asMap().entrySet()) {
-+            E k = e.getKey();
-+            Long v = e.getValue();
-+            if (v != null && v > currentTime) {
-+                rsp.add(k);
-+            }
-+        }
-+        return rsp;
-+    }
- }
+ public final class ExpiringSet {
 diff --git a/common/src/main/java/me/lucko/luckperms/common/verbose/VerboseListener.java b/common/src/main/java/me/lucko/luckperms/common/verbose/VerboseListener.java
-index 22c082368..063585fce 100644
+index 335e112de..bdadd8859 100644
 --- a/common/src/main/java/me/lucko/luckperms/common/verbose/VerboseListener.java
 +++ b/common/src/main/java/me/lucko/luckperms/common/verbose/VerboseListener.java
-@@ -174,7 +174,7 @@ public class VerboseListener {
+@@ -173,7 +173,7 @@ public class VerboseListener {
          }
  
          // just send as a raw message
@@ -382,18 +388,10 @@ index 22c082368..063585fce 100644
              return;
          }
 diff --git a/settings.gradle b/settings.gradle
-index b03ef276d..b88ed5914 100644
+index 71cc2068a..111f5e035 100644
 --- a/settings.gradle
 +++ b/settings.gradle
-@@ -1,7 +1,6 @@
- // Fabric Needs this
- pluginManagement {
-     repositories {
--        jcenter()
-         maven {
-             url 'https://maven.fabricmc.net/'
-         }
-@@ -14,24 +13,4 @@ include (
+@@ -21,26 +21,4 @@ include (
          'api',
          'common',
          'common:loader-utils',
@@ -404,6 +402,8 @@ index b03ef276d..b88ed5914 100644
 -        'bungee',
 -        'bungee:loader',
 -        'fabric',
+-        'neoforge',
+-        'neoforge:loader',
 -        'forge',
 -        'forge:loader',
 -        'forge:forge-api',
@@ -412,7 +412,7 @@ index b03ef276d..b88ed5914 100644
 -        'sponge',
 -        'sponge:loader',
 -        'sponge:sponge-service',
--        'sponge:sponge-service-api8',
+-        'sponge:sponge-service-proxy',
 -        'velocity',
 -        'standalone',
 -        'standalone:loader',
