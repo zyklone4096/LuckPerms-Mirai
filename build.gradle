@@ -14,8 +14,8 @@ import java.nio.file.Files
 plugins {
     id 'java'
     id 'java-library'
-    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.0'
+    id 'com.gradleup.shadow' version '9.0.0-beta6'
 }
 
 def lpVersion = ({
@@ -65,12 +65,11 @@ allprojects {
     afterEvaluate {
         compileKotlin {
             kotlinOptions {
-                jvmTarget = '1.8'
+                jvmTarget = '17'
                 freeCompilerArgs += [
                         '-Xopt-in=kotlin.RequiresOptIn',
                         '-Xopt-in=io.github.karlatemp.luckperms.mirai.openapi.anno.InternalLpApi',
-                        '-Xopt-in=io.github.karlatemp.luckperms.mirai.openapi.anno.ExperimentalLpApi',
-                        '-Xjvm-default=enable'
+                        '-Xopt-in=io.github.karlatemp.luckperms.mirai.openapi.anno.ExperimentalLpApi'
                 ]
             }
         }
@@ -161,8 +160,13 @@ shadowJar {
             'org.mongodb',
             'org.apache.commons'
     ]
-    dependencyFilter.exclude {
-        excludes.contains(it.moduleGroup + ":" + it.moduleName) || excludes.contains(it.moduleGroup)
+    dependencies {
+        for (final def ex in excludes) {
+            if (ex.contains(":"))
+                exclude(dependency(ex))
+            else
+                exclude(dependency("${ex}:.*"))
+        }
     }
 }
 
@@ -187,16 +191,14 @@ task ts47() {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = '1.8'
-        freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn',
-                             '-Xjvm-default=enable']
+        jvmTarget = '17'
+        freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn']
     }
 }
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = '1.8'
-        freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn',
-                             '-Xjvm-default=enable']
+        jvmTarget = '17'
+        freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn']
     }
 }
 

@@ -86,7 +86,7 @@ object MiraiCalculator : ContextCalculator<PermitteeId> {
                         consumer.accept("type", "group")
                         consumer.accept("group", target.groupId.toString())
                         scanMember(target.groupId, target.memberId)?.let { member ->
-                            consumer.accept("level", member.permission.name.toLowerCase())
+                            consumer.accept("level", member.permission.name.lowercase())
                             consumer.accept("admin", member.permission.isOperator().toString())
                         }
                     }
@@ -103,7 +103,7 @@ object MiraiCalculator : ContextCalculator<PermitteeId> {
                         consumer.accept("type", "temp")
                         consumer.accept("group", target.groupId.toString())
                         scanMember(target.groupId, target.memberId)?.let { member ->
-                            consumer.accept("level", member.permission.name.toLowerCase())
+                            consumer.accept("level", member.permission.name.lowercase())
                             consumer.accept("admin", member.permission.isOperator().toString())
                         }
                     }

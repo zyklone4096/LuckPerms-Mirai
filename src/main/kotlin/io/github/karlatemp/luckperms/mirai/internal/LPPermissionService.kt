@@ -160,7 +160,7 @@ internal object LPPermissionService : PermissionService<LuckPermsPermission> {
         if (internalId == "*") {
             return ROOT
         }
-        if (internalId.toLowerCase().startsWith("<lp>")) {
+        if (internalId.lowercase().startsWith("<lp>")) {
             throw IllegalArgumentException("Cannot register `$internalId`: Protected domain: <lp>")
         }
         if (parent === Magic_CONSOLE_ONLY) return parent

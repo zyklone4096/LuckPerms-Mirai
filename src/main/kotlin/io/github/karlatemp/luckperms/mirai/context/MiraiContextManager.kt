@@ -59,7 +59,7 @@ class MiraiContextManager : ContextManager<PermitteeId, PermitteeId>(
 
     private class InlineQueryOptionsSupplier(
         private val sender: PermitteeId,
-        private val cache: LoadingCache<PermitteeId, QueryOptions>
+        private val cache: LoadingCache<PermitteeId?, QueryOptions?>
     ) : QueryOptionsSupplier {
         override fun getQueryOptions(): QueryOptions = cache[sender]!!
     }
